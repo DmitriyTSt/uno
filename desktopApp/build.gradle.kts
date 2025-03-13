@@ -1,3 +1,5 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
@@ -24,4 +26,16 @@ tasks.test {
 
 kotlin {
     jvmToolchain(19)
+}
+
+compose.desktop {
+    application {
+        mainClass = "ru.dmitriyt.uno.desktop.presentation.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "uno"
+            packageVersion = "1.0.0"
+        }
+    }
 }

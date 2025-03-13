@@ -1,7 +1,7 @@
 package ru.dmitriyt.uno.core.domain.strategy
 
 import ru.dmitriyt.uno.core.domain.model.Card
-import ru.dmitriyt.uno.core.domain.model.Color
+import ru.dmitriyt.uno.core.domain.model.CardColor
 
 /**
  * Стратегия
@@ -17,7 +17,7 @@ interface Strategy {
      * Предполагается, что метод запускается, если среди карт игрока есть карта, которой можно сделать ход.
      * Метод должен выбирать карту для хода, а если выбирается Wild карта, то еще и задавать нужный цвет
      */
-    fun getStrategyMove(
+    suspend fun getStrategyMove(
         /** Состояние хода */
         move: Move,
         /** Ваши карты */
@@ -33,7 +33,7 @@ data class StrategyMove(
     /** Карта, которую кладете */
     val card: Card,
     /** Заданный цвет, если положили Wild карту */
-    val color: Color?,
+    val color: CardColor?,
 )
 
 /**
@@ -51,5 +51,5 @@ sealed interface Move {
     data object Execute : Move
 
     /** Карта задает новый цвет */
-    data class GiveColor(val color: Color) : Move
+    data class GiveColor(val color: CardColor) : Move
 }

@@ -1,14 +1,25 @@
 package ru.dmitriyt.uno.core.domain.strategy
 
+import kotlinx.coroutines.delay
 import ru.dmitriyt.uno.core.domain.CardComparator
+import ru.dmitriyt.uno.core.domain.CardComparatorImpl
 import ru.dmitriyt.uno.core.domain.model.Card
-import ru.dmitriyt.uno.core.domain.model.Color
+import ru.dmitriyt.uno.core.domain.model.CardColor
 import ru.dmitriyt.uno.core.domain.model.Rank
 
 open class NaiveStrategy(
-    private val cardComparator: CardComparator,
+    private val emulateDelay: Boolean,
+    private val cardComparator: CardComparator = CardComparatorImpl(),
 ) : Strategy {
-    override fun getStrategyMove(move: Move, cards: List<Card>, topCard: Card, playersCardCounts: List<Int>): StrategyMove {
+    override suspend fun getStrategyMove(
+        move: Move,
+        cards: List<Card>,
+        topCard: Card,
+        playersCardCounts: List<Int>,
+    ): StrategyMove {
+        if (emulateDelay) {
+            delay(500)
+        }
         val maxColor = maxColor(cards)
         val wildCard = cards.find { it.rank == Rank.WILD }
         val wildDraw4Card = cards.find { it.rank == Rank.WILD_DRAW_4 }
@@ -54,7 +65,7 @@ open class NaiveStrategy(
         return StrategyMove(card, color)
     }
 
-    private fun maxColor(cards: List<Card>): Color {
+    private fun maxColor(cards: List<Card>): CardColor {
         require(cards.isNotEmpty()) { "Cards must not be empty" }
         return cards.groupBy { it.color }
             .mapValues { it.value.size }
@@ -63,6 +74,6 @@ open class NaiveStrategy(
             .sortedBy { it.first }
             .maxByOrNull { it.second }
             ?.first
-            ?: Color.entries.first()
+            ?: CardColor.entries.first()
     }
 }

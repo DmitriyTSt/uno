@@ -11,13 +11,21 @@ class GameController(
 ) {
 
     /** Игровой процесс */
-    fun game(strategies: List<Strategy>, onStep: (Desk) -> Unit = {}): GameResult {
+    suspend fun game(strategies: List<Strategy>, onStep: (Result<Desk>) -> Unit = {}): GameResult {
         var currentDesk = deskController.start(strategies)
-        onStep(currentDesk)
+        onStep(Result.success(currentDesk))
         var winner: Player?
+        val onInternalStep = { desk: Desk ->
+            onStep(Result.success(desk))
+        }
         do {
-            currentDesk = deskController.gameStep(currentDesk)
-            onStep(currentDesk)
+            var currentStep = kotlin.runCatching { deskController.gameStep(currentDesk, onInternalStep) }
+            onStep(currentStep)
+            while (currentStep.isFailure) {
+                currentStep = kotlin.runCatching { deskController.gameStep(currentDesk, onInternalStep) }
+                onStep(currentStep)
+            }
+            currentDesk = currentStep.getOrThrow()
             winner = currentDesk.players.find { it.hasNoCards() }
         } while (winner == null)
         return GameResult(

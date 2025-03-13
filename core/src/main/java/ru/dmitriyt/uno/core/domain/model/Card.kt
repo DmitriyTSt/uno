@@ -4,7 +4,7 @@ data class Card(
     /** Значение карты */
     val rank: Rank,
     /** Цвет. Null, если черный */
-    val color: Color?,
+    val color: CardColor?,
 )
 
 enum class Rank(val points: Int) {
@@ -25,7 +25,7 @@ enum class Rank(val points: Int) {
     WILD_DRAW_4(50),
 }
 
-enum class Color {
+enum class CardColor {
     Red,
     Green,
     Blue,

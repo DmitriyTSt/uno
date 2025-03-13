@@ -1,7 +1,7 @@
 package ru.dmitriyt.uno.core.domain.util
 
 import ru.dmitriyt.uno.core.domain.model.Card
-import ru.dmitriyt.uno.core.domain.model.Color
+import ru.dmitriyt.uno.core.domain.model.CardColor
 import ru.dmitriyt.uno.core.domain.model.Desk
 import ru.dmitriyt.uno.core.domain.strategy.Move
 
@@ -10,7 +10,7 @@ val Desk.pileTop: Card
     get() = pile.first()
 
 /** Необходимый цвет для совершения текущего хода */
-val Desk.requiredColor: Color
+val Desk.requiredColor: CardColor
     get() = if (state is Move.GiveColor) {
         state.color
     } else {

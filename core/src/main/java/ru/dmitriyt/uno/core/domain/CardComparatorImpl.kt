@@ -1,7 +1,7 @@
 package ru.dmitriyt.uno.core.domain
 
 import ru.dmitriyt.uno.core.domain.model.Card
-import ru.dmitriyt.uno.core.domain.model.Color
+import ru.dmitriyt.uno.core.domain.model.CardColor
 
 class CardComparatorImpl : CardComparator {
 
@@ -13,7 +13,7 @@ class CardComparatorImpl : CardComparator {
         return card1.color == card2.color
     }
 
-    override fun isSameColor(color1: Color?, color2: Color?): Boolean {
+    override fun isSameColor(color1: CardColor?, color2: CardColor?): Boolean {
         return color1 == color2
     }
 

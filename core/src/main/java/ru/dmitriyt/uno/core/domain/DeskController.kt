@@ -14,11 +14,12 @@ import ru.dmitriyt.uno.core.domain.util.pileTop
 
 private const val START_CARDS_COUNT = 7
 
-fun DeskController(): DeskController {
+fun DeskController(debug: Boolean): DeskController {
     return DeskController(
         cardFactory = CardFactory(),
         playerFactory = PlayerFactory(),
         cardComparator = CardComparatorImpl(),
+        debug = debug,
     )
 }
 
@@ -26,6 +27,7 @@ class DeskController(
     private val cardFactory: CardFactory,
     private val playerFactory: PlayerFactory,
     private val cardComparator: CardComparator,
+    private val debug: Boolean,
 ) {
 
     /** Раздача карт и их корректировка */
@@ -128,15 +130,15 @@ class DeskController(
         return correctedStateDesk.nextPlayer()
     }
 
-    fun externalGetPlayableCards(desk: Desk): List<Card> {
-        return desk.getPlayableCards()
+    fun externalGetPlayableCards(desk: Desk, player: Player = desk.players.first()): List<Card> {
+        return desk.getPlayableCards(player)
     }
 
     /**
      * Выдает список тех карт, находящихся на руках у текущего игрока,
      * которыми он мог бы сделать ход в данной конфигурации игры
      */
-    private fun Desk.getPlayableCards(): List<Card> {
+    private fun Desk.getPlayableCards(player: Player = players.first()): List<Card> {
         val predicate = when (state) {
             Move.Execute -> { card: Card -> cardComparator.isSameRank(card, pileTop) }
             is Move.GiveColor -> { card: Card -> card.color == state.color || card.isWild() }
@@ -146,7 +148,7 @@ class DeskController(
                     card.isWild()
             }
         }
-        return players.first().cards.filter(predicate)
+        return player.cards.filter(predicate)
     }
 
     /** Выдает список целых чисел — количество карт каждого игрока в порядке их следования по ходу игры */
@@ -155,12 +157,16 @@ class DeskController(
     }
 
     /** Моделирование хода текущего игрока */
-    private fun Desk.play(playableCards: List<Card>): Desk {
+    private suspend fun Desk.play(playableCards: List<Card>): Desk {
         require(playableCards.isNotEmpty()) { "Playable cards must not be empty" }
+
+        log("DEBUG ${players.first().name} before select")
 
         val strategyMove = players.first().strategy.getStrategyMove(state, playableCards, pileTop, getPlayersCardCounts())
 
-        require(playableCards.contains(strategyMove.card)) { "${strategyMove.card} must contain in playable cards" }
+        log("DEBUG ${players.first().name} selected card $strategyMove")
+
+        require(playableCards.contains(strategyMove.card)) { "${strategyMove.card} must contain in playable cards (${playableCards})" }
 
         val movedCardDesk = copy(
             pile = listOf(strategyMove.card) + pile,
@@ -209,25 +215,42 @@ class DeskController(
     }
 
     /** Моделирование одного хода игры */
-    fun gameStep(desk: Desk): Desk {
-        return desk.internalGameStep()
+    suspend fun gameStep(desk: Desk, onStep: (Desk) -> Unit): Desk {
+        return desk.internalGameStep(onStep)
     }
 
     /** Моделирование одного хода игры */
-    private fun Desk.internalGameStep(): Desk {
+    private suspend fun Desk.internalGameStep(onStep: (Desk) -> Unit): Desk {
         val playableCards = getPlayableCards()
+        log("DEBUG ---- start game step ${players.first().name} with $playableCards / ${players.first().cards.size}")
         return if (playableCards.isNotEmpty()) {
-            play(playableCards)
+            log("DEBUG ${players.first().name} before first play ${playableCards} / ${players.first().cards.size}")
+            play(playableCards).apply {
+                log("DEBUG ${players.first().name} after first play")
+            }
         } else {
             if (state == Move.Execute) {
-                pass()
+                log("DEBUG ${players.first().name} before execute skip ${playableCards} / ${players.first().cards.size}")
+                pass().apply {
+                    log("DEBUG ${players.first().name} after execute skip")
+                }
             } else {
                 take1().let { takenCardDesk ->
+                    // чтобы было видно добор карт
+                    onStep(takenCardDesk)
                     val newPlayableCards = takenCardDesk.getPlayableCards()
+                    log(
+                        "DEBUG ${takenCardDesk.players.first().name} before second play " +
+                            "${newPlayableCards} / ${takenCardDesk.players.first().cards.size}"
+                    )
                     if (newPlayableCards.isNotEmpty()) {
-                        takenCardDesk.play(newPlayableCards)
+                        takenCardDesk.play(newPlayableCards).apply {
+                            log("DEBUG ${takenCardDesk.players.first().name} after second play")
+                        }
                     } else {
-                        takenCardDesk.pass()
+                        takenCardDesk.pass().apply {
+                            log("DEBUG ${takenCardDesk.players.first().name} after take skip")
+                        }
                     }
                 }
             }
@@ -242,6 +265,12 @@ class DeskController(
             } else {
                 player
             }
+        }
+    }
+
+    private fun log(message: String) {
+        if (debug) {
+            println(message)
         }
     }
 }

@@ -1,7 +1,7 @@
 package ru.dmitriyt.uno.core.domain.factory
 
 import ru.dmitriyt.uno.core.domain.model.Card
-import ru.dmitriyt.uno.core.domain.model.Color
+import ru.dmitriyt.uno.core.domain.model.CardColor
 import ru.dmitriyt.uno.core.domain.model.Rank
 
 class CardFactory {
@@ -20,9 +20,9 @@ class CardFactory {
     }
 
     /** Доступные цвета для значения карты */
-    private fun allRankColors(rank: Rank): List<Color?> {
+    private fun allRankColors(rank: Rank): List<CardColor?> {
         val wildColorList = listOf(null)
-        val simpleColorList = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow)
+        val simpleColorList = listOf(CardColor.Red, CardColor.Green, CardColor.Blue, CardColor.Yellow)
         return when (rank) {
             Rank.WILD -> wildColorList
             Rank.WILD_DRAW_4 -> wildColorList

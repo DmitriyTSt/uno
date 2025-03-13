@@ -4,6 +4,7 @@ import ru.dmitriyt.uno.core.domain.DeskController
 import ru.dmitriyt.uno.core.domain.GameController
 import ru.dmitriyt.uno.core.domain.model.GameResult
 import ru.dmitriyt.uno.core.domain.strategy.NaiveStrategy
+import ru.dmitriyt.uno.core.domain.strategy.RandomStrategy
 import ru.dmitriyt.uno.core.domain.util.pileTop
 import ru.dmitriyt.uno.core.domain.util.requiredColor
 
@@ -21,7 +22,7 @@ suspend fun main() {
         }
     }
 
-    println(wins)
+    println("Wins $wins")
     fails.toList().sortedBy { it.second }.forEachIndexed { index, pair ->
         println("${index + 1}: ${pair.first} (${pair.second})")
     }
@@ -40,7 +41,8 @@ private suspend fun testGameWith2NaiveStrategies(
         override val name: String
             get() = "Naive2"
     }
-    val gameResult = gameController.game(listOf(naive1, naive2)) { deskResult ->
+    val random = RandomStrategy(emulateDelay = false)
+    val gameResult = gameController.game(listOf(naive1, naive2, random)) { deskResult ->
         val desk = deskResult.getOrThrow()
         if (debug) {
             println("Top: ${desk.pileTop}, required: ${desk.requiredColor}")

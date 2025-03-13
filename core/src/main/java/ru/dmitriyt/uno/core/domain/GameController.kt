@@ -4,6 +4,7 @@ import ru.dmitriyt.uno.core.domain.model.Desk
 import ru.dmitriyt.uno.core.domain.model.GameResult
 import ru.dmitriyt.uno.core.domain.model.Player
 import ru.dmitriyt.uno.core.domain.strategy.Strategy
+import ru.dmitriyt.uno.core.domain.util.countLoss
 import ru.dmitriyt.uno.core.domain.util.hasNoCards
 
 class GameController(
@@ -30,12 +31,7 @@ class GameController(
         } while (winner == null)
         return GameResult(
             winner = winner.name,
-            fails = countLoss(currentDesk.players - winner),
+            fails = (currentDesk.players - winner).countLoss(),
         )
-    }
-
-    /** Сумма очков по картам каждого игрока. Возвращает Map<Имя игрока, количество очков> */
-    private fun countLoss(players: List<Player>): Map<String, Int> {
-        return players.associate { player -> player.name to player.cards.sumOf { it.rank.points } }
     }
 }

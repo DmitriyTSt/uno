@@ -9,8 +9,8 @@ import ru.dmitriyt.uno.core.domain.model.Rank
 import ru.dmitriyt.uno.core.domain.strategy.Move
 import ru.dmitriyt.uno.core.domain.strategy.Strategy
 import ru.dmitriyt.uno.core.domain.util.isNumeric
-import ru.dmitriyt.uno.core.domain.util.isWild
 import ru.dmitriyt.uno.core.domain.util.pileTop
+import ru.dmitriyt.uno.core.domain.util.playableCards
 
 private const val START_CARDS_COUNT = 7
 
@@ -139,16 +139,7 @@ class DeskController(
      * которыми он мог бы сделать ход в данной конфигурации игры
      */
     private fun Desk.getPlayableCards(player: Player = players.first()): List<Card> {
-        val predicate = when (state) {
-            Move.Execute -> { card: Card -> cardComparator.isSameRank(card, pileTop) }
-            is Move.GiveColor -> { card: Card -> card.color == state.color || card.isWild() }
-            Move.Proceed -> { card: Card ->
-                cardComparator.isSameRank(card, pileTop) ||
-                    cardComparator.isSameColor(card, pileTop) ||
-                    card.isWild()
-            }
-        }
-        return player.cards.filter(predicate)
+        return player.cards.playableCards(state, pileTop, cardComparator)
     }
 
     /** Выдает список целых чисел — количество карт каждого игрока в порядке их следования по ходу игры */
@@ -162,7 +153,7 @@ class DeskController(
 
         log("DEBUG ${players.first().name} before select")
 
-        val strategyMove = players.first().strategy.getStrategyMove(state, playableCards, pileTop, getPlayersCardCounts())
+        val strategyMove = players.first().strategy.getStrategyMove(state, players.first().cards, pileTop, getPlayersCardCounts())
 
         log("DEBUG ${players.first().name} selected card $strategyMove")
 

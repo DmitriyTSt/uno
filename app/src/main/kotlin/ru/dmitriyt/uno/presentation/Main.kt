@@ -3,6 +3,7 @@ package ru.dmitriyt.uno.presentation
 import ru.dmitriyt.uno.core.domain.DeskController
 import ru.dmitriyt.uno.core.domain.GameController
 import ru.dmitriyt.uno.core.domain.model.GameResult
+import ru.dmitriyt.uno.core.domain.strategy.EmulateGameStrategy
 import ru.dmitriyt.uno.core.domain.strategy.NaiveStrategy
 import ru.dmitriyt.uno.core.domain.strategy.RandomStrategy
 import ru.dmitriyt.uno.core.domain.util.pileTop
@@ -14,7 +15,7 @@ suspend fun main() {
 
     val wins = mutableMapOf<String, Int>()
     val fails = mutableMapOf<String, Int>()
-    repeat(50000) {
+    repeat(5000) {
         val gameResult = testGameWith2NaiveStrategies(deskController, gameController, false)
         wins[gameResult.winner] = wins.getOrDefault(gameResult.winner, 0) + 1
         gameResult.fails.forEach { (playerName, points) ->
@@ -42,7 +43,8 @@ private suspend fun testGameWith2NaiveStrategies(
             get() = "Naive2"
     }
     val random = RandomStrategy(emulateDelay = false)
-    val gameResult = gameController.game(listOf(naive1, naive2, random)) { deskResult ->
+    val emulatedGameResult = EmulateGameStrategy()
+    val gameResult = gameController.game(listOf(naive1, naive2, random, emulatedGameResult)) { deskResult ->
         val desk = deskResult.getOrThrow()
         if (debug) {
             println("Top: ${desk.pileTop}, required: ${desk.requiredColor}")

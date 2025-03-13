@@ -21,7 +21,7 @@ import ru.dmitriyt.uno.core.domain.strategy.Strategy
 import ru.dmitriyt.uno.core.domain.strategy.StrategyMove
 
 class AppViewModel(
-    private val deskController: DeskController = DeskController(),
+    private val deskController: DeskController = DeskController(debug = false),
     private val gameController: GameController = GameController(deskController),
 ) {
 

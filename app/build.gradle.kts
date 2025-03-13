@@ -1,5 +1,10 @@
 plugins {
     kotlin("jvm")
+    id("application")
+}
+
+application {
+    mainClass = "ru.dmitriyt.uno.presentation.MainKt"
 }
 
 repositories {

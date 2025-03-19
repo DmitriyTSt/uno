@@ -28,7 +28,7 @@ fun Desk(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
-        CircularLayout(Modifier.fillMaxSize().background(Color.DarkGray)) {
+        CircularLayout(Modifier.fillMaxSize().background(Color.LightGray)) {
             desk.players.forEach { player ->
                 Player(
                     player = player,

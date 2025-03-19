@@ -36,6 +36,10 @@ class AppViewModel(
     private var mutex = Mutex()
 
     init {
+        startGame()
+    }
+
+    fun startGame() {
         val strategies = listOf(1, 2).map { "Naive${it}" }.map {
             object : NaiveStrategy(emulateDelay = true) {
                 override val name: String
@@ -74,8 +78,11 @@ class AppViewModel(
                             desk = desk.copy(
                                 players = desk.players.sortedBy { it.name },
                             ),
-                            deskController.externalGetPlayableCards(desk, desk.players.find { it.name == "USER" }!!),
-                            desk.players.first(),
+                            playableCards = deskController.externalGetPlayableCards(
+                                desk = desk,
+                                player = desk.players.find { it.name == "USER" }!!,
+                            ),
+                            selectedPlayer = desk.players.first(),
                             requiredColor = (desk.state as? Move.GiveColor)?.color,
                         )
                         mutableGameState.value = state

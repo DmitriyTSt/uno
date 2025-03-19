@@ -19,7 +19,13 @@ fun UnoCard(
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
 ) {
-    UnoBaseCard(color = card.color.toComposeColor(), size = size, modifier = modifier, enabled = enabled, onClick = onClick) {
+    UnoBaseCard(
+        color = card.color.toComposeColor(),
+        size = size,
+        modifier = modifier,
+        enabled = enabled,
+        onClick = onClick,
+    ) {
         val textStyle = MaterialTheme.typography.body1
         val color = Color.White
         val text = when (card.rank) {
@@ -41,7 +47,11 @@ fun UnoUnknownCard(
     size: DpSize,
     modifier: Modifier = Modifier,
 ) {
-    UnoBaseCard(color = Color.Gray, size = size, modifier = modifier) {
+    UnoBaseCard(
+        color = Color.Gray,
+        size = size,
+        modifier = modifier,
+    ) {
         Text("UNO", modifier = Modifier.align(Alignment.Center))
     }
 }

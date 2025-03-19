@@ -3,6 +3,7 @@ package ru.dmitriyt.uno.desktop.presentation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -42,11 +43,16 @@ fun App() {
                 modifier = Modifier.fillMaxSize(),
             )
         } else if (state.winner != null) {
-            Text(
-                text = "WINNER: ${state.winner}",
-                style = MaterialTheme.typography.h4,
-                modifier = Modifier.align(Alignment.Center),
-            )
+            Column(Modifier.align(Alignment.Center)) {
+                Text(
+                    text = "WINNER: ${state.winner}",
+                    style = MaterialTheme.typography.h4,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
+                Button(onClick = { viewModel.startGame() }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                    Text("New game")
+                }
+            }
         }
     }
     Column {

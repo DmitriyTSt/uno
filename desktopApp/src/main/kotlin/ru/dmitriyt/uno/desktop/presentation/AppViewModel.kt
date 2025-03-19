@@ -22,8 +22,7 @@ class AppViewModel(
     private val deskController: DeskController = DeskController(debug = false),
     private val gameController: GameController = GameController(deskController),
 ) {
-
-    private val viewModelScope = CoroutineScope(Job() + Dispatchers.Main)
+    private val viewModelScope = CoroutineScope(Job() + Dispatchers.Main.immediate)
 
     private val mutableGameState = MutableStateFlow(UiUnoState())
     val gameState = mutableGameState.asStateFlow().filterNotNull()
@@ -52,7 +51,7 @@ class AppViewModel(
             }
         }
 
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch {
             val gameResult = gameController.game(strategies + userInputStrategy) { deskResult ->
                 deskResult.onSuccess { desk ->
                     viewModelScope.launch {
@@ -78,7 +77,7 @@ class AppViewModel(
     }
 
     fun selectCard(card: Card, color: CardColor?) {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch {
             selectCardMutex.withLock {
                 selectedCard = StrategyMove(card, color)
             }

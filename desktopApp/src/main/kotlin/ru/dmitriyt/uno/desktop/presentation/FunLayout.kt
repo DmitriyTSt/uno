@@ -54,8 +54,6 @@ fun FanLayout(
 
         val xOffsets = List(placeables.size) { index -> (maxItemWidth / 2) * sin(angleRads[index]).toFloat() }
         val yOffsets = List(placeables.size) { index -> (maxItemHeight / 2) * (1 - cos(angleRads[index])).toFloat() }
-        println("yOffsets")
-        println(yOffsets)
 
         // размеры контейнера
         // смотрим половину реальной ширины которую займет повернутый элемент + его отступ от центра

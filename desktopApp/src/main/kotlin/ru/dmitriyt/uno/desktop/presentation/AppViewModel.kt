@@ -3,7 +3,6 @@ package ru.dmitriyt.uno.desktop.presentation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -17,7 +16,6 @@ import ru.dmitriyt.uno.core.domain.model.Card
 import ru.dmitriyt.uno.core.domain.model.CardColor
 import ru.dmitriyt.uno.core.domain.strategy.Move
 import ru.dmitriyt.uno.core.domain.strategy.NaiveStrategy
-import ru.dmitriyt.uno.core.domain.strategy.Strategy
 import ru.dmitriyt.uno.core.domain.strategy.StrategyMove
 
 class AppViewModel(
@@ -46,27 +44,11 @@ class AppViewModel(
                     get() = it
             }
         }
-        val userInputStrategy = object : Strategy {
-            override val name: String = "USER"
-
-            override suspend fun getStrategyMove(
-                move: Move,
-                cards: List<Card>,
-                topCard: Card,
-                playersCardCounts: List<Int>
-            ): StrategyMove {
-                var strategyMove: StrategyMove?
-                selectCardMutex.withLock {
-                    strategyMove = selectedCard
+        val userInputStrategy = UserInputStrategy {
+            selectCardMutex.withLock {
+                selectedCard.apply {
+                    selectedCard = null
                 }
-                while (strategyMove == null) {
-                    delay(100)
-                    selectCardMutex.withLock {
-                        strategyMove = selectedCard
-                    }
-                }
-                selectedCard = null
-                return strategyMove!!
             }
         }
 

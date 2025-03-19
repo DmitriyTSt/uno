@@ -7,10 +7,6 @@ application {
     mainClass = "ru.dmitriyt.uno.presentation.MainKt"
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":core"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")

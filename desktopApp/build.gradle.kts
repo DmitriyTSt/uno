@@ -6,12 +6,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-repositories {
-    mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    google()
-}
-
 dependencies {
     implementation(project(":core"))
     implementation(compose.desktop.currentOs)

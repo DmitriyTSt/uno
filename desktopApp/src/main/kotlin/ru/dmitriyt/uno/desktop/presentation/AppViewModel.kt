@@ -85,4 +85,8 @@ class AppViewModel(
             }
         }
     }
+
+    fun hideError() {
+        mutableGameState.update { it.copy(error = null) }
+    }
 }

@@ -1,8 +1,10 @@
 package ru.dmitriyt.uno.desktop.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -14,6 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import ru.dmitriyt.uno.core.domain.model.Card
 import ru.dmitriyt.uno.core.domain.util.isWild
 import ru.dmitriyt.uno.desktop.presentation.component.ColorSelectorDialog
@@ -47,8 +53,8 @@ fun App() {
             Column(Modifier.align(Alignment.Center)) {
                 Text(
                     text = "WINNER: ${state.winner}",
-                    style = MaterialTheme.typography.h4,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.h4,
                 )
                 Button(onClick = { viewModel.startGame() }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     Text("New game")
@@ -56,11 +62,24 @@ fun App() {
             }
         }
     }
-    Column {
-        Text("PLAYERS = ${state.desk?.players?.map { it.name }}")
-        Text("PLAYABLE CARDS = ${state.playableCards}")
-        if (state.error != null) {
-            Text("ERROR: ${state.error}")
+
+    if (state.error != null) {
+        Dialog(onDismissRequest = {
+            viewModel.hideError()
+        }) {
+            Column(Modifier.background(Color.White)) {
+                Text(
+                    text = "ERROR",
+                    modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.body1,
+                )
+                Text(
+                    text = state.error.orEmpty(),
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.body1,
+                )
+            }
         }
     }
 

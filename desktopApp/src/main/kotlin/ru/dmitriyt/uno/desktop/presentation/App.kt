@@ -3,6 +3,9 @@ package ru.dmitriyt.uno.desktop.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -25,8 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ru.dmitriyt.uno.core.domain.model.Card
@@ -43,67 +49,74 @@ fun App() {
 
     var colorPickerDialogCard by remember { mutableStateOf<Card?>(null) }
 
-    state.let { (desk, playableCards, currentPlayer, requiredColor, winner) ->
-        Box(Modifier.fillMaxSize()) {
-            val cardModifier = Modifier.width(90.dp).height(130.dp)
-            if (desk != null && winner == null) {
-                CircularLayout(Modifier.fillMaxSize().background(Color.DarkGray)) {
-                    desk.players.forEach { player ->
-                        Column {
-                            FanLayout(Modifier.background(Color.Cyan)) {
-                                player.cards.forEach { card ->
-                                    if (player.name == "USER") {
-                                        UnoCard(card, modifier = cardModifier.clickable {
+    Box(Modifier.fillMaxSize()) {
+        val desk = state.desk
+        println("WINNER: ${state.winner}")
+        if (desk != null && state.winner == null) {
+            CircularLayout(Modifier.fillMaxSize().background(Color.DarkGray)) {
+                desk.players.forEach { player ->
+                    Column {
+                        FanLayout(Modifier.background(Color.Cyan)) {
+                            player.cards.forEach { card ->
+                                if (player.name == "USER") {
+                                    UnoCard(
+                                        card = card,
+                                        size = DpSize(90.dp, 130.dp),
+                                        enabled = state.playableCards.contains(card),
+                                        onClick = {
                                             if (card.isWild()) {
                                                 colorPickerDialogCard = card
                                             } else {
                                                 viewModel.selectCard(card, null)
                                             }
-                                        })
-                                    } else {
-                                        UnoUnknownCard(modifier = cardModifier)
-                                    }
+                                        },
+                                    )
+                                } else {
+                                    UnoUnknownCard(size = DpSize(90.dp, 130.dp))
                                 }
                             }
-                            val fontWeight = if (player.name == currentPlayer?.name) {
-                                FontWeight.Bold
-                            } else {
-                                FontWeight.Normal
-                            }
-                            Text("Player ${player.name}", fontWeight = fontWeight)
                         }
+                        val fontWeight = if (player.name == state.selectedPlayer?.name) {
+                            FontWeight.Bold
+                        } else {
+                            FontWeight.Normal
+                        }
+                        Text("Player ${player.name}", fontWeight = fontWeight)
                     }
                 }
+            }
 
-                UnoCard(desk.pileTop, modifier = cardModifier.align(Alignment.Center))
+            UnoCard(desk.pileTop, size = DpSize(90.dp, 130.dp), modifier = Modifier.align(Alignment.Center))
 
-                if (requiredColor != null) {
-                    Row(
+            if (state.requiredColor != null) {
+                Row(
+                    Modifier
+                        .align(Alignment.Center)
+                ) {
+                    Box(
                         Modifier
-                            .align(Alignment.Center)
-                    ) {
-                        Box(
-                            Modifier
-                                .size(48.dp)
-                        )
-                        Spacer(Modifier.width(146.dp))
-                        Box(
-                            Modifier.background(getComposeColor(requiredColor))
-                                .size(48.dp)
-                        )
-                    }
+                            .size(48.dp)
+                    )
+                    Spacer(Modifier.width(146.dp))
+                    Box(
+                        Modifier.background(getComposeColor(state.requiredColor))
+                            .size(48.dp)
+                    )
                 }
             }
-            if (state.winner != null) {
-                Text("WINNER: ${state.error}", style = MaterialTheme.typography.h4)
-            }
+        } else if (state.winner != null) {
+            Text(
+                text = "WINNER: ${state.winner}",
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier.align(Alignment.Center),
+            )
         }
-        Column {
-            Text("PLAYERS = ${desk?.players?.map { it.name }}")
-            Text("PLAYABLE CARDS = $playableCards")
-            if (state.error != null) {
-                Text("ERROR: ${state.error}")
-            }
+    }
+    Column {
+        Text("PLAYERS = ${state.desk?.players?.map { it.name }}")
+        Text("PLAYABLE CARDS = ${state.playableCards}")
+        if (state.error != null) {
+            Text("ERROR: ${state.error}")
         }
     }
 
@@ -124,15 +137,15 @@ fun App() {
 }
 
 @Composable
-fun UnoUnknownCard(modifier: Modifier) {
-    UnoBaseCard(Color.Gray, modifier = modifier) {
+fun UnoUnknownCard(size: DpSize, modifier: Modifier = Modifier) {
+    UnoBaseCard(color = Color.Gray, size = size, modifier = modifier) {
         Text("UNO", modifier = Modifier.align(Alignment.Center))
     }
 }
 
 @Composable
-fun UnoCard(card: Card, modifier: Modifier = Modifier) {
-    UnoBaseCard(getComposeColor(card.color), modifier = modifier) {
+fun UnoCard(card: Card, size: DpSize, modifier: Modifier = Modifier, enabled: Boolean = true, onClick: (() -> Unit)? = null) {
+    UnoBaseCard(color = getComposeColor(card.color), size = size, modifier = modifier, enabled = enabled, onClick = onClick) {
         val textStyle = MaterialTheme.typography.body1
         val color = Color.White
         val text = when (card.rank) {
@@ -151,21 +164,41 @@ fun UnoCard(card: Card, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun UnoBaseCard(color: Color, modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
+fun UnoBaseCard(
+    color: Color,
+    size: DpSize,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: (() -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit
+) {
+    val shape = RoundedCornerShape(16.dp)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+    val scale = if (isHovered) 1.3f else 1f
     Box(
         modifier
+            .hoverable(interactionSource)
+            .width(size.width)
+            .height(size.height)
+            .scale(scale)
+            .clip(shape)
             .background(
                 color = color,
-                shape = RoundedCornerShape(16.dp)
+                shape = shape,
             )
             .border(
                 width = 4.dp,
                 color = Color.White,
-                shape = RoundedCornerShape(16.dp)
-            ),
+                shape = shape,
+            )
+            .let { if (onClick != null && enabled) it.clickable { onClick() } else it },
     ) {
         Box(Modifier.fillMaxSize().padding(vertical = 4.dp, horizontal = 8.dp)) {
             content()
+        }
+        if (!enabled) {
+            Box(Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.5f)))
         }
     }
 }

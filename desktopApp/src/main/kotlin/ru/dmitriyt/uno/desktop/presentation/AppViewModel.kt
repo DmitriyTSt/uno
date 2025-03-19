@@ -68,15 +68,8 @@ class AppViewModel(
             }
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val gameResult = gameController.game(strategies + userInputStrategy) { deskResult ->
-//                println("--- ${this@AppViewModel}")
-//                println("PILE: ${desk.pile}")
-//                println("Top: ${desk.pileTop}, required: ${desk.requiredColor}")
-//                println("Playable cards: ${deskController.externalGetPlayableCards(desk)}")
-//                desk.players.forEach {
-//                    println("${it.name} : ${it.cards}")
-//                }
                 deskResult.onSuccess { desk ->
                     viewModelScope.launch {
                         val state = UiUnoState(
@@ -93,7 +86,6 @@ class AppViewModel(
                     mutableGameState.update { it.copy(error = error.message) }
                 }
             }
-            println("------ FINISH ${gameResult.winner}")
             mutableGameState.update { it.copy(winner = gameResult.winner) }
         }
     }

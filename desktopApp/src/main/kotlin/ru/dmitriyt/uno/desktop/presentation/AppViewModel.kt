@@ -17,6 +17,8 @@ import ru.dmitriyt.uno.core.domain.model.CardColor
 import ru.dmitriyt.uno.core.domain.strategy.Move
 import ru.dmitriyt.uno.core.domain.strategy.NaiveStrategy
 import ru.dmitriyt.uno.core.domain.strategy.StrategyMove
+import ru.dmitriyt.uno.desktop.domain.strategy.UserInputStrategy
+import ru.dmitriyt.uno.desktop.presentation.model.UiUnoState
 
 class AppViewModel(
     private val deskController: DeskController = DeskController(debug = false),

@@ -1,4 +1,4 @@
-package ru.dmitriyt.uno.desktop.presentation
+package ru.dmitriyt.uno.desktop.presentation.component
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background

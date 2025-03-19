@@ -35,7 +35,7 @@ fun UnoBaseCard(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val shape = RoundedCornerShape(16.dp)
     val interactionSource = remember { MutableInteractionSource() }

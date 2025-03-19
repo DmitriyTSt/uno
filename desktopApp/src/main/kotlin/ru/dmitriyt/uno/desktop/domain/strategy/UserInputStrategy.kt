@@ -1,4 +1,4 @@
-package ru.dmitriyt.uno.desktop.presentation
+package ru.dmitriyt.uno.desktop.domain.strategy
 
 import kotlinx.coroutines.delay
 import ru.dmitriyt.uno.core.domain.model.Card

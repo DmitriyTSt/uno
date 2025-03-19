@@ -16,8 +16,7 @@ import androidx.compose.ui.unit.dp
 import ru.dmitriyt.uno.core.domain.model.Card
 import ru.dmitriyt.uno.core.domain.model.Desk
 import ru.dmitriyt.uno.core.domain.util.pileTop
-import ru.dmitriyt.uno.desktop.presentation.CircularLayout
-import ru.dmitriyt.uno.desktop.presentation.UiUnoState
+import ru.dmitriyt.uno.desktop.presentation.model.UiUnoState
 import ru.dmitriyt.uno.desktop.presentation.extensions.toComposeColor
 
 @Composable

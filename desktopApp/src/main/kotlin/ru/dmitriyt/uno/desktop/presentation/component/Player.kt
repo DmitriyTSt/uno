@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import ru.dmitriyt.uno.core.domain.model.Card
 import ru.dmitriyt.uno.core.domain.model.Player
-import ru.dmitriyt.uno.desktop.presentation.FanLayout
 
 @Composable
 fun Player(

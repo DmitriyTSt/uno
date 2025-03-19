@@ -18,6 +18,7 @@ import ru.dmitriyt.uno.core.domain.model.Card
 import ru.dmitriyt.uno.core.domain.util.isWild
 import ru.dmitriyt.uno.desktop.presentation.component.ColorSelectorDialog
 import ru.dmitriyt.uno.desktop.presentation.component.Desk
+import ru.dmitriyt.uno.desktop.presentation.model.UiUnoState
 
 private val viewModel = AppViewModel()
 

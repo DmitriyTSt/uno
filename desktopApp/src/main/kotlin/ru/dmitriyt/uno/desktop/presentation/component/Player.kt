@@ -21,7 +21,9 @@ fun Player(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
-        FanLayout {
+        FanLayout(
+            angleStep = 15f,
+        ) {
             player.cards.forEach { card ->
                 if (isUser) {
                     UnoCard(

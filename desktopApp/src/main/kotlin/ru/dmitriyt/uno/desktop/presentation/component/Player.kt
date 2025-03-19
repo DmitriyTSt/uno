@@ -1,6 +1,7 @@
 package ru.dmitriyt.uno.desktop.presentation.component
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,13 +18,12 @@ fun Player(
     playableCards: List<Card>,
     isUser: Boolean,
     isSelected: Boolean,
+    isFanLayout: Boolean,
     onCardClick: (Card) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
-        FanLayout(
-            angleStep = 15f,
-        ) {
+        HandLayout(isFanLayout = isFanLayout || !isUser) {
             player.cards.forEach { card ->
                 if (isUser) {
                     UnoCard(
@@ -49,5 +49,18 @@ fun Player(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontWeight = fontWeight,
         )
+    }
+}
+
+@Composable
+private fun HandLayout(isFanLayout: Boolean, content: @Composable () -> Unit) {
+    if (isFanLayout) {
+        FanLayout(
+            angleStep = 15f,
+        ) {
+            content()
+        }
+    } else {
+        Row { content() }
     }
 }

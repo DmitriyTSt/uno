@@ -3,10 +3,12 @@ package ru.dmitriyt.uno.desktop.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,6 +33,7 @@ private val viewModel = AppViewModel()
 @Composable
 fun App() {
     val state by viewModel.gameState.collectAsState(UiUnoState())
+    var isFanHandLayout by remember { mutableStateOf(true) }
 
     var colorPickerDialogCard by remember { mutableStateOf<Card?>(null) }
 
@@ -40,6 +43,7 @@ fun App() {
             Desk(
                 desk = desk,
                 state = state,
+                isFanHandLayout = isFanHandLayout,
                 onPlayerCardClick = { card ->
                     if (card.isWild()) {
                         colorPickerDialogCard = card
@@ -60,6 +64,11 @@ fun App() {
                     Text("New game")
                 }
             }
+        }
+
+        Row(Modifier.align(Alignment.TopEnd).padding(16.dp)) {
+            Text(text = "Показывать карты веером", modifier = Modifier.align(Alignment.CenterVertically))
+            Switch(isFanHandLayout, onCheckedChange = { isChecked -> isFanHandLayout = isChecked })
         }
     }
 

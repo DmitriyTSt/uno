@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import kotlin.math.PI
 import kotlin.math.cos
-import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
@@ -42,8 +41,9 @@ private fun circularMeasurePolicy(startAngle: Float): MeasurePolicy = MeasurePol
     val placeables = measurables.map { measurable ->
         measurable.measure(Constraints(0, constraints.maxWidth, 0, constraints.maxHeight))
     }
-    val maxItemSize = max(placeables.maxOf { it.width }, placeables.maxOf { it.height })
-    val radius = containerSize / 2f - maxItemSize / 2f
+    // считаем минимальный размер TODO потому что максимальный все равно внизу по ширине никуда не денется в данном использовании
+    val minItemSize = min(placeables.maxOf { it.width }, placeables.maxOf { it.height })
+    val radius = containerSize / 2f - minItemSize / 2f
 
     layout(containerSize, containerSize) {
         val angleStep = (2 * PI) / placeables.size // угол между элементами в радианах

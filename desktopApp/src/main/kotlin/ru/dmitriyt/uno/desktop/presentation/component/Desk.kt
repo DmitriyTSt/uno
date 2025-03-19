@@ -23,6 +23,7 @@ import ru.dmitriyt.uno.desktop.presentation.model.UiUnoState
 fun Desk(
     desk: Desk,
     state: UiUnoState,
+    isFanHandLayout: Boolean,
     onPlayerCardClick: (Card) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -37,6 +38,7 @@ fun Desk(
                     playableCards = state.playableCards,
                     isUser = player.name == "USER",
                     isSelected = player.name == state.selectedPlayer?.name,
+                    isFanLayout = isFanHandLayout,
                     onCardClick = { card ->
                         onPlayerCardClick(card)
                     },

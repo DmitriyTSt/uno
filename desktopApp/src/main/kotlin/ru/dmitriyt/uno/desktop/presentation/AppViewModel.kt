@@ -33,7 +33,7 @@ class AppViewModel(
     @Volatile
     private var selectedCard: StrategyMove? = null
 
-    private var mutex = Mutex()
+    private val selectCardMutex = Mutex()
 
     init {
         startGame()
@@ -56,12 +56,12 @@ class AppViewModel(
                 playersCardCounts: List<Int>
             ): StrategyMove {
                 var strategyMove: StrategyMove?
-                mutex.withLock {
+                selectCardMutex.withLock {
                     strategyMove = selectedCard
                 }
                 while (strategyMove == null) {
                     delay(100)
-                    mutex.withLock {
+                    selectCardMutex.withLock {
                         strategyMove = selectedCard
                     }
                 }
@@ -97,7 +97,7 @@ class AppViewModel(
 
     fun selectCard(card: Card, color: CardColor?) {
         viewModelScope.launch(Dispatchers.Default) {
-            mutex.withLock {
+            selectCardMutex.withLock {
                 selectedCard = StrategyMove(card, color)
             }
         }

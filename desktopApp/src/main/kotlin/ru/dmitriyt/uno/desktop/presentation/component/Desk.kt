@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import ru.dmitriyt.uno.core.domain.model.Card
 import ru.dmitriyt.uno.core.domain.model.Desk
 import ru.dmitriyt.uno.core.domain.util.pileTop
-import ru.dmitriyt.uno.desktop.presentation.model.UiUnoState
 import ru.dmitriyt.uno.desktop.presentation.extensions.toComposeColor
+import ru.dmitriyt.uno.desktop.presentation.model.UiUnoState
 
 @Composable
 fun Desk(
@@ -27,7 +27,10 @@ fun Desk(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
-        CircularLayout(Modifier.fillMaxSize().background(Color.LightGray)) {
+        CircularLayout(
+            startAngle = 90f,
+            modifier = Modifier.fillMaxSize().background(Color.LightGray),
+        ) {
             desk.players.forEach { player ->
                 Player(
                     player = player,

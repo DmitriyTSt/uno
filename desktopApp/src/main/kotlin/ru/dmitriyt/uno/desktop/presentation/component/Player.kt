@@ -1,11 +1,10 @@
 package ru.dmitriyt.uno.desktop.presentation.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -22,7 +21,7 @@ fun Player(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
-        FanLayout(Modifier.background(Color.Cyan)) {
+        FanLayout {
             player.cards.forEach { card ->
                 if (isUser) {
                     UnoCard(
@@ -43,6 +42,10 @@ fun Player(
         } else {
             FontWeight.Normal
         }
-        Text("Player ${player.name}", fontWeight = fontWeight)
+        Text(
+            text = "Player ${player.name}",
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            fontWeight = fontWeight,
+        )
     }
 }

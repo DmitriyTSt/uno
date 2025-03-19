@@ -59,7 +59,10 @@ class AppViewModel(
                     viewModelScope.launch {
                         val state = UiUnoState(
                             desk = desk.copy(
-                                players = desk.players.sortedBy { it.name },
+                                players = desk.players.let { players ->
+                                    val indexOfUser = players.indexOfFirst { it.name == "USER" }
+                                    players.subList(indexOfUser, players.size) + players.subList(0, indexOfUser)
+                                },
                             ),
                             playableCards = deskController.externalGetPlayableCards(
                                 desk = desk,

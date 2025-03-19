@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
@@ -23,10 +24,11 @@ fun CircularLayout(
     startAngle: Float = -180f,
     content: @Composable () -> Unit,
 ) {
+    val measurePolicy = remember(startAngle) { circularMeasurePolicy(startAngle) }
     Layout(
         content = content,
         modifier = modifier,
-        measurePolicy = circularMeasurePolicy(startAngle),
+        measurePolicy = measurePolicy,
     )
 }
 

@@ -51,7 +51,6 @@ class AppViewModel(
                 topCard: Card,
                 playersCardCounts: List<Int>
             ): StrategyMove {
-                println("DEBUG start suspend strategy")
                 var strategyMove: StrategyMove?
                 mutex.withLock {
                     strategyMove = selectedCard
@@ -63,7 +62,6 @@ class AppViewModel(
                     }
                 }
                 selectedCard = null
-                println("DEBUG end suspend strategy")
                 return strategyMove!!
             }
         }

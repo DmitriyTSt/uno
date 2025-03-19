@@ -51,7 +51,6 @@ fun App() {
 
     Box(Modifier.fillMaxSize()) {
         val desk = state.desk
-        println("WINNER: ${state.winner}")
         if (desk != null && state.winner == null) {
             CircularLayout(Modifier.fillMaxSize().background(Color.DarkGray)) {
                 desk.players.forEach { player ->
